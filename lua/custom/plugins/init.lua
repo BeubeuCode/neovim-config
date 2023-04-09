@@ -3,17 +3,6 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-
-  {
-    "nvim-tree/nvim-tree.lua",
-    version = "*",
-    dependencies = {
-    "nvim-tree/nvim-web-devicons",
-    },
-    config = function()
-    require("nvim-tree").setup {}
-    end,
-  },
   {
     'akinsho/bufferline.nvim',
     config = function()
