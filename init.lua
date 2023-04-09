@@ -114,19 +114,21 @@ require('lazy').setup({
     },
   },
 
-  --{ -- Theme inspired by Atom
-  --  'navarasu/onedark.nvim',
-  --  priority = 1000,
-  --  config = function()
-  --    vim.cmd.colorscheme 'onedark'
-  --  end,
-  --},
+  { -- Theme inspired by Atom
+    'navarasu/onedark.nvim',
+    priority = 1000,
+  },
 
   {
     'Mofiqul/dracula.nvim',
     priority = 1000,
+  },
+
+  {
+    'ellisonleao/gruvbox.nvim',
+    priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'dracula'
+      vim.cmd.colorscheme 'gruvbox'
     end,
   },
 
@@ -317,7 +319,7 @@ vim.keymap.set("n", "<leader>fbt", ":NvimTreeToggle<cr>", { desc= '[F]ile [B]row
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
