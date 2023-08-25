@@ -35,7 +35,6 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now :)
 --]]
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
@@ -77,7 +76,8 @@ require('lazy').setup({
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
-  { -- LSP Configuration & Plugins
+  {
+    -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
@@ -93,14 +93,17 @@ require('lazy').setup({
     },
   },
 
-  { -- Autocompletion
+  {
+    -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
   },
 
+  --  vim.cmd[[autocmd BufWritePre * lua vim.lsp.buf.format()]]
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
-  { -- Adds git releated signs to the gutter, as well as utilities for managing changes
+  { 'folke/which-key.nvim',          opts = {} },
+  {
+    -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
       -- See `:help gitsigns.txt`
@@ -114,39 +117,85 @@ require('lazy').setup({
     },
   },
 
-  { -- Theme inspired by Atom
+  {
+    -- Theme inspired by Atom
     'navarasu/onedark.nvim',
     priority = 1000,
+    -- config = function ()
+    --   vim.cmd.colorscheme 'onedark'
+    -- end
   },
-
   {
-    'Mofiqul/dracula.nvim',
-    priority = 1000,
+    'maxmx03/dracula.nvim',
+    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      local dracula = require('dracula')
+
+      dracula.setup({})
+
+      vim.cmd('colorscheme dracula')
+    end
   },
+  -- {
+  --   'Mofiqul/dracula.nvim',
+  --   priority = 1000,
+  --   -- config = function()
+  --   --   vim.cmd.colorscheme 'dracula'
+  --   -- end
+  -- },
 
   {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
+    -- config = function()
+    --   vim.cmd.colorscheme 'gruvbox'
+    -- end,
+  },
+
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    -- config = function ()
+    --   vim.cmd.colorscheme 'catppuccin'
+    -- end
+  },
+
+  {
+    'Mofiqul/vscode.nvim',
+    priority = 1000,
+    -- config = function()
+    --   vim.cmd.colorscheme 'vscode'
+    -- end
+  },
+
+  {
+    'doums/darcula',
+    priority = 1000,
+    -- config = function()
+    --   vim.cmd.colorscheme 'darcula'
+    -- end
+  },
+
+  {
+    'Julpikar/night-owl.nvim',
+    priority = 1000,
+    -- config = function()
+    --   vim.cmd.colorscheme 'night-owl'
+    -- end
+  },
+
+  {
+    'yeddaif/neovim-purple',
+    priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'gruvbox'
-    end,
+      vim.cmd.colorscheme 'neovim_purple'
+    end
   },
 
-
-  { -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = true,
-        theme = 'auto',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
-  },
-
-  { -- Add indentation guides even on blank lines
+  {
+    -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
@@ -157,7 +206,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',         opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -175,7 +224,8 @@ require('lazy').setup({
     end,
   },
 
-  { -- Highlight, edit, and navigate code
+  {
+    -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
@@ -188,7 +238,7 @@ require('lazy').setup({
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
+  require 'kickstart.plugins.autoformat',
   -- require 'kickstart.plugins.debug',
 
   -- NOTE: The import below automatically adds your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -261,10 +311,10 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- map <C-l> <C-W>l
 -- ]]
 
-vim.keymap.set('n', '<leader>j', '<C-W>j', { silent = true})
-vim.keymap.set('n', '<leader>k', '<C-W>k', { silent = true})
-vim.keymap.set('n', '<leader>l', '<C-W>l', { silent = true})
-vim.keymap.set('n', '<leader>h', '<C-W>h', { silent = true})
+vim.keymap.set('n', '<leader>j', '<C-W>j', { silent = true })
+vim.keymap.set('n', '<leader>k', '<C-W>k', { silent = true })
+vim.keymap.set('n', '<leader>l', '<C-W>l', { silent = true })
+vim.keymap.set('n', '<leader>h', '<C-W>h', { silent = true })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -281,7 +331,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
-    file_ignore_patterns = {"node_modules"},
+    file_ignore_patterns = { "node_modules" },
     mappings = {
       i = {
         ['<C-u>'] = false,
@@ -312,8 +362,8 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
 -- config Nvim tree
-vim.keymap.set("n", "<leader>fbf", ":NvimTreeFocus<cr>", { desc= '[F]ile [B]rowser [F]ocus' })
-vim.keymap.set("n", "<leader>fbt", ":NvimTreeToggle<cr>", { desc= '[F]ile [B]rowser [T]oggle' })
+vim.keymap.set("n", "<leader>fbt", ":NvimTreeToggle<cr>", { desc = '[F]ile [B]rowser [T]oggle' })
+vim.keymap.set("n", "<leader>fbf", ":NvimTreeFindFile<cr>", { desc = '[F]ile [B]rowser [S]how [F]ile' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -430,6 +480,12 @@ local on_attach = function(_, bufnr)
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
+
+  -- vim.api.nvim_create_autocmd("BufWritePost", {
+  --   callback = function()
+  --     vim.lsp.buf.format()
+  --   end
+  -- })
 end
 
 -- Enable the following language servers
@@ -526,4 +582,3 @@ cmp.setup {
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
-
