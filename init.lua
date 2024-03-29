@@ -127,10 +127,9 @@ require('lazy').setup({
   {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'gruvbox'
-    end,
   },
+
+  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
 
   { -- Set lualine as statusline
@@ -264,6 +263,10 @@ vim.keymap.set('n', '<leader>k', '<C-W>k', { silent = true})
 vim.keymap.set('n', '<leader>l', '<C-W>l', { silent = true})
 vim.keymap.set('n', '<leader>h', '<C-W>h', { silent = true})
 
+-- map <C-\><C-n> to escape in terminal mode
+vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true})
+
+
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -309,6 +312,7 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
+vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true})
 -- config Nvim tree
 vim.keymap.set("n", "<leader>fbf", ":NvimTreeFocus<cr>", { desc= '[F]ile [B]rowser [F]ocus' })
 vim.keymap.set("n", "<leader>fbt", ":NvimTreeToggle<cr>", { desc= '[F]ile [B]rowser [T]oggle' })
@@ -317,10 +321,10 @@ vim.keymap.set("n", "<leader>fbt", ":NvimTreeToggle<cr>", { desc= '[F]ile [B]row
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'ruby', 'graphql' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-  auto_install = false,
+  auto_install = true,
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
@@ -477,6 +481,12 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = false,
+  }
+)
+
 -- nvim-cmp setup
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
@@ -521,6 +531,8 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+vim.cmd('colorscheme catppuccin')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
