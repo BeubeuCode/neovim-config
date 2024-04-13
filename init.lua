@@ -127,6 +127,19 @@ require('lazy').setup({
   {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
+    config = function()
+        return { terminal_colors = true, }
+    end
+  },
+
+
+  {
+    "baliestri/aura-theme",
+    lazy = false,
+    priority = 1000,
+    config = function(plugin)
+      vim.opt.rtp:append(plugin.dir .. "/packages/neovim")
+    end
   },
 
   { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
@@ -277,6 +290,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+
+-- [[yank rel filepath to system register]]
+vim.api.nvim_set_keymap('n', '<leader>rp', 'let @+ = expand("%")', { noremap = true, silent = true, desc= 'Yank relative file path to system register'}) 
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -532,7 +549,7 @@ cmp.setup {
   },
 }
 
-vim.cmd('colorscheme catppuccin')
+vim.cmd('colorscheme gruvbox')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
