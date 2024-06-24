@@ -128,10 +128,19 @@ require('lazy').setup({
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = function()
-        return { terminal_colors = true, }
+      return { terminal_colors = true, }
     end
   },
 
+  {
+    'doums/darcula',
+    priority = 1000,
+  },
+
+  {
+    'Mofiqul/vscode.nvim',
+    priority = 1000,
+  },
 
   {
     "baliestri/aura-theme",
@@ -144,6 +153,10 @@ require('lazy').setup({
 
   { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
+  {
+    'Shatur/neovim-ayu',
+    priority = 1000,
+  },
 
   { -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -156,7 +169,7 @@ require('lazy').setup({
         section_separators = '',
       },
       sections = {
-        lualine_c = {{ 'filename', path = 2 }},
+        lualine_c = {{ 'filename', path = 1 }},
       },
     },
   },
@@ -556,7 +569,37 @@ cmp.setup {
   },
 }
 
-vim.cmd('colorscheme gruvbox')
+-- run spec
+function _G.RunSpecPath()
+  vim.cmd('sp')
+  vim.cmd('ter bundle exec rspec ' .. vim.g.specPath)
+end
+
+function _G.RunRspecLine()
+  vim.g.specPath = vim.fn.expand('%') .. ':' .. vim.fn.line('.')
+  RunSpecPath()
+end
+
+function _G.RunRspecFile()
+  vim.g.specPath = vim.fn.expand('%')
+  RunSpecPath()
+end
+
+-- Map keys to call Lua functions
+vim.api.nvim_set_keymap('n', '<Leader>rf', ':lua RunRspecFile()<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<Leader>rl', ':lua RunRspecLine()<CR>', {noremap = true, silent = true})
+
+-- use tab to cycle through tabs
+vim.api.nvim_set_keymap('n', '<Tab>', ':tabnext<CR>', {noremap = true, silent = true})
+-- use shift-tab to cycle through tabs
+vim.api.nvim_set_keymap('n', '<S-Tab>', ':tabprevious<CR>', {noremap = true, silent = true})
+
+-- use C-n to cycle through buffers 
+vim.api.nvim_set_keymap('n', '<C-n>', ':bnext<CR>', {noremap = true, silent = true})
+-- use C-p to cycle through buffers 
+vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', {noremap = true, silent = true})
+
+vim.cmd('colorscheme catppuccin-mocha')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
