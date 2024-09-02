@@ -125,6 +125,11 @@ require('lazy').setup({
   },
 
   {
+    'Mofiqul/vscode.nvim',
+    priority = 1000,
+  },
+
+  {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = function()
@@ -141,6 +146,8 @@ require('lazy').setup({
     'Mofiqul/vscode.nvim',
     priority = 1000,
   },
+
+  { "rose-pine/neovim", name = "rose-pine", priority=1000 },
 
   {
     "baliestri/aura-theme",
@@ -599,7 +606,7 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':bnext<CR>', {noremap = true, silent = tr
 -- use C-p to cycle through buffers 
 vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', {noremap = true, silent = true})
 
-vim.cmd('colorscheme catppuccin-mocha')
+vim.cmd('colorscheme vscode')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
