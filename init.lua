@@ -606,7 +606,7 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':bnext<CR>', {noremap = true, silent = tr
 -- use C-p to cycle through buffers 
 vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', {noremap = true, silent = true})
 
-vim.cmd('colorscheme vscode')
+vim.cmd('colorscheme gruvbox')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
