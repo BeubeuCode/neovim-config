@@ -125,6 +125,11 @@ require('lazy').setup({
   },
 
   {
+    'Mofiqul/vscode.nvim',
+    priority = 1000,
+  },
+
+  {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = function()
@@ -141,6 +146,8 @@ require('lazy').setup({
     'Mofiqul/vscode.nvim',
     priority = 1000,
   },
+
+  { "rose-pine/neovim", name = "rose-pine", priority=1000 },
 
   {
     "baliestri/aura-theme",
