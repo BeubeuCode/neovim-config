@@ -1,3 +1,4 @@
+return {}
 -- Bubbles config for lualine
 -- Author: lokesh-krishna
 -- MIT license, see LICENSE for more details.
