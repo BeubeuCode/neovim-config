@@ -137,7 +137,7 @@ require('lazy').setup({
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = function()
-      return { terminal_colors = true, }
+      return { transparent_mode = true }
     end
   },
 
@@ -243,7 +243,7 @@ require('lazy').setup({
 -- See `:help vim.o`
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 
 -- Make line numbers default
 vim.wo.number = true
@@ -305,6 +305,10 @@ vim.keymap.set('n', '<leader>h', '<C-W>h', { silent = true})
 
 -- map <C-\><C-n> to escape in terminal mode
 vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true})
+
+-- Ensure n and N work for search navigation (next/previous search result)
+vim.keymap.set('n', 'n', 'nzzzv', { silent = true, desc = 'Next search result' })
+vim.keymap.set('n', 'N', 'Nzzzv', { silent = true, desc = 'Previous search result' })
 
 
 -- [[ Highlight on yank ]]
@@ -610,7 +614,9 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':bnext<CR>', {noremap = true, silent = tr
 -- use C-p to cycle through buffers 
 vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', {noremap = true, silent = true})
 
-vim.cmd('colorscheme gruvbox')
+vim.cmd('TransparentEnable')
+
+vim.cmd('colorscheme catppuccin-mocha')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

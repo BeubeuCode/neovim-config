@@ -13,21 +13,27 @@ return  {
 
       null_ls.setup({
         on_attach = function(client, bufnr)
+          local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+          local skip_format_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
+          local should_format = not vim.tbl_contains(skip_format_filetypes, filetype)
+
           if client.supports_method("textDocument/formatting") then
             vim.keymap.set("n", "<Leader>f", function()
               vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
             end, { buffer = bufnr, desc = "[lsp] format" })
 
-            -- format on save
-            vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
-            vim.api.nvim_create_autocmd(event, {
-              buffer = bufnr,
-              group = group,
-              callback = function()
-                vim.lsp.buf.format({ bufnr = bufnr, async = async })
-              end,
-              desc = "[lsp] format on save",
-            })
+            -- format on save (skip for JS/TS files)
+            if should_format then
+              vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
+              vim.api.nvim_create_autocmd(event, {
+                buffer = bufnr,
+                group = group,
+                callback = function()
+                  vim.lsp.buf.format({ bufnr = bufnr, async = async })
+                end,
+                desc = "[lsp] format on save",
+              })
+            end
           end
 
           if client.supports_method("textDocument/rangeFormatting") then
@@ -47,14 +53,10 @@ return  {
           "css",
           "graphql",
           "html",
-          "javascript",
-          "javascriptreact",
           "json",
           "less",
           "markdown",
           "scss",
-          "typescript",
-          "typescriptreact",
           "yaml",
         },
       })
