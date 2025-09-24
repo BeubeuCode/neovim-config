@@ -374,7 +374,21 @@ require('nvim-treesitter.configs').setup {
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = true,
 
-  highlight = { enable = true },
+  highlight = {
+    enable = true,
+    -- Disable slow treesitter highlight for large files
+    disable = function(lang, buf)
+      local max_filesize = 100 * 1024 -- 100 KB
+      local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+      if ok and stats and stats.size > max_filesize then
+        return true
+      end
+    end,
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    additional_vim_regex_highlighting = false,
+  },
   indent = { enable = true, disable = { 'python' } },
   incremental_selection = {
     enable = true,
@@ -430,6 +444,16 @@ require('nvim-treesitter.configs').setup {
     },
   },
 }
+
+-- Fix treesitter highlighting for TypeScript/TSX files
+vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+  pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
+  callback = function()
+    vim.defer_fn(function()
+      vim.cmd("TSBufEnable highlight")
+    end, 100)
+  end,
+})
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
@@ -496,7 +520,7 @@ local servers = {
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
+  ts_ls = {},
 
   lua_ls = {
     Lua = {
@@ -514,27 +538,26 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 -- Setup mason so it can manage external tooling
-require('mason-lspconfig').setup()
-
--- Ensure the servers above are installed
+require('mason').setup()
 local mason_lspconfig = require 'mason-lspconfig'
 local lspconfig = require('lspconfig')
+
+-- Ensure the servers above are installed
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
 
--- mason_lspconfig.setup_handlers {
---   function(server_name)
---     lspconfig[server_name].setup {
---       capabilities = capabilities,
---       on_attach = on_attach,
---       settings = servers[server_name],
---     }
---   end,
--- }
+-- Configure LSP servers
+for server_name, server_config in pairs(servers) do
+  lspconfig[server_name].setup {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = server_config,
+  }
+end
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
+  vim.lsp.handlers['textDocument/publishDiagnostics'], {
     virtual_text = false,
   }
 )
