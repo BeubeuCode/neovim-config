@@ -323,9 +323,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 
--- [[yank rel filepath to system register]]
-vim.api.nvim_set_keymap('n', '<leader>rp', 'let @+ = expand("%")', { noremap = true, silent = true, desc= 'Yank relative file path to system register'}) 
-
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
@@ -623,9 +620,23 @@ function _G.RunRspecFile()
   RunSpecPath()
 end
 
+-- php run spec
+function _G.RunPestSpecPath()
+  vim.cmd('sp')
+  vim.cmd('ter php artisan test ' .. vim.g.specPath)
+end
+
+function _G.RunPestFile()
+  vim.g.specPath = vim.fn.expand('%')
+  RunPestSpecPath()
+end
+
 -- Map keys to call Lua functions
 vim.api.nvim_set_keymap('n', '<Leader>rf', ':lua RunRspecFile()<CR>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '<Leader>rl', ':lua RunRspecLine()<CR>', {noremap = true, silent = true})
+
+-- run pest spec path
+vim.api.nvim_set_keymap('n', '<Leader>rp', ':lua RunPestFile()<CR>', {noremap = true, silent = true})
 
 -- use tab to cycle through tabs
 vim.api.nvim_set_keymap('n', '<Tab>', ':tabnext<CR>', {noremap = true, silent = true})
