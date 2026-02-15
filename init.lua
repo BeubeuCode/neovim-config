@@ -214,12 +214,15 @@ require('lazy').setup({
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+    main = 'nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
-    config = function()
-      pcall(require('nvim-treesitter.install').update { with_sync = true })
-    end,
+    opts = {
+      ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'ruby', 'graphql' },
+      auto_install = true,
+    },
   },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
@@ -364,93 +367,75 @@ vim.keymap.set("n", "<leader>fbt", ":NvimTreeToggle<cr>", { desc= '[F]ile [B]row
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
-require('nvim-treesitter.configs').setup {
-  -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'ruby', 'graphql' },
 
-  -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-  auto_install = true,
+-- Enable treesitter highlighting for all buffers (built-in since Neovim 0.10)
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function()
+    -- Disable for large files
+    local max_filesize = 100 * 1024 -- 100 KB
+    local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(0))
+    if ok and stats and stats.size > max_filesize then
+      return
+    end
+    pcall(vim.treesitter.start)
+  end,
+})
 
-  highlight = {
-    enable = true,
-    -- Disable slow treesitter highlight for large files
-    disable = function(lang, buf)
-      local max_filesize = 100 * 1024 -- 100 KB
-      local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-      if ok and stats and stats.size > max_filesize then
-        return true
-      end
-    end,
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    additional_vim_regex_highlighting = false,
-  },
-  indent = { enable = true, disable = { 'python' } },
-  incremental_selection = {
-    enable = true,
+-- Incremental selection keymaps
+vim.keymap.set('n', '<c-space>', function()
+  require('nvim-treesitter.incremental_selection').init_selection()
+end, { desc = 'Start incremental selection' })
+vim.keymap.set('v', '<c-space>', function()
+  require('nvim-treesitter.incremental_selection').node_incremental()
+end, { desc = 'Increment selection' })
+vim.keymap.set('v', '<M-space>', function()
+  require('nvim-treesitter.incremental_selection').node_decremental()
+end, { desc = 'Decrement selection' })
+vim.keymap.set('v', '<c-s>', function()
+  require('nvim-treesitter.incremental_selection').scope_incremental()
+end, { desc = 'Increment scope selection' })
+
+-- Configure textobjects
+require('nvim-treesitter-textobjects').setup {
+  select = {
+    lookahead = true,
     keymaps = {
-      init_selection = '<c-space>',
-      node_incremental = '<c-space>',
-      scope_incremental = '<c-s>',
-      node_decremental = '<M-space>',
+      ['aa'] = '@parameter.outer',
+      ['ia'] = '@parameter.inner',
+      ['af'] = '@function.outer',
+      ['if'] = '@function.inner',
+      ['ac'] = '@class.outer',
+      ['ic'] = '@class.inner',
     },
   },
-  textobjects = {
-    select = {
-      enable = true,
-      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ['aa'] = '@parameter.outer',
-        ['ia'] = '@parameter.inner',
-        ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
-        ['ac'] = '@class.outer',
-        ['ic'] = '@class.inner',
-      },
+  move = {
+    set_jumps = true,
+    goto_next_start = {
+      [']m'] = '@function.outer',
+      [']]'] = '@class.outer',
     },
-    move = {
-      enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        [']m'] = '@function.outer',
-        [']]'] = '@class.outer',
-      },
-      goto_next_end = {
-        [']M'] = '@function.outer',
-        [']['] = '@class.outer',
-      },
-      goto_previous_start = {
-        ['[m'] = '@function.outer',
-        ['[['] = '@class.outer',
-      },
-      goto_previous_end = {
-        ['[M'] = '@function.outer',
-        ['[]'] = '@class.outer',
-      },
+    goto_next_end = {
+      [']M'] = '@function.outer',
+      [']['] = '@class.outer',
     },
-    swap = {
-      enable = true,
-      swap_next = {
-        ['<leader>a'] = '@parameter.inner',
-      },
-      swap_previous = {
-        ['<leader>A'] = '@parameter.inner',
-      },
+    goto_previous_start = {
+      ['[m'] = '@function.outer',
+      ['[['] = '@class.outer',
+    },
+    goto_previous_end = {
+      ['[M'] = '@function.outer',
+      ['[]'] = '@class.outer',
+    },
+  },
+  swap = {
+    swap_next = {
+      ['<leader>a'] = '@parameter.inner',
+    },
+    swap_previous = {
+      ['<leader>A'] = '@parameter.inner',
     },
   },
 }
-
--- Fix treesitter highlighting for TypeScript/TSX files
-vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
-  pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
-  callback = function()
-    vim.defer_fn(function()
-      vim.cmd("TSBufEnable highlight")
-    end, 100)
-  end,
-})
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
@@ -650,7 +635,7 @@ vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', {noremap = true, silent 
 
 vim.cmd('TransparentEnable')
 
-vim.cmd('colorscheme catppuccin-mocha')
+vim.cmd('colorscheme ayu-dark')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

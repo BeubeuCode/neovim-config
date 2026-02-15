@@ -36,6 +36,9 @@ return {
       noremap = true,
     },
   },
+  cond = function()
+    return vim.fn.filereadable(vim.fn.getcwd() .. "/artisan") == 1
+  end,
   event = { "VeryLazy" },
   opts = {
     lsp_server = "intelephense", -- "phpactor | intelephense"
