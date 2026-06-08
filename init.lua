@@ -214,15 +214,19 @@ require('lazy').setup({
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    lazy = false,
     build = ':TSUpdate',
-    main = 'nvim-treesitter',
     dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
+      { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'main' },
     },
-    opts = {
-      ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'jsx', 'vimdoc', 'vim', 'ruby', 'graphql', 'php' },
-      auto_install = true,
-    },
+    config = function()
+      -- New (main-branch) API: install parsers explicitly. 'jsx' is not a parser;
+      -- .jsx/.tsx are handled by the javascript/tsx parsers.
+      require('nvim-treesitter').install {
+        'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'javascript', 'vimdoc', 'vim', 'ruby', 'graphql', 'php',
+      }
+    end,
   },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
@@ -381,61 +385,61 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Incremental selection keymaps
-vim.keymap.set('n', '<c-space>', function()
-  require('nvim-treesitter.incremental_selection').init_selection()
-end, { desc = 'Start incremental selection' })
-vim.keymap.set('v', '<c-space>', function()
-  require('nvim-treesitter.incremental_selection').node_incremental()
-end, { desc = 'Increment selection' })
-vim.keymap.set('v', '<M-space>', function()
-  require('nvim-treesitter.incremental_selection').node_decremental()
-end, { desc = 'Decrement selection' })
-vim.keymap.set('v', '<c-s>', function()
-  require('nvim-treesitter.incremental_selection').scope_incremental()
-end, { desc = 'Increment scope selection' })
+-- NOTE: The nvim-treesitter `main` branch removed the built-in incremental
+-- selection module, so the previous <c-space>/<M-space>/<c-s> keymaps are gone.
 
--- Configure textobjects
+-- Configure textobjects (nvim-treesitter-textobjects `main` branch).
+-- setup() now only takes options; the actual keymaps are defined explicitly below.
 require('nvim-treesitter-textobjects').setup {
   select = {
     lookahead = true,
-    keymaps = {
-      ['aa'] = '@parameter.outer',
-      ['ia'] = '@parameter.inner',
-      ['af'] = '@function.outer',
-      ['if'] = '@function.inner',
-      ['ac'] = '@class.outer',
-      ['ic'] = '@class.inner',
-    },
   },
   move = {
     set_jumps = true,
-    goto_next_start = {
-      [']m'] = '@function.outer',
-      [']]'] = '@class.outer',
-    },
-    goto_next_end = {
-      [']M'] = '@function.outer',
-      [']['] = '@class.outer',
-    },
-    goto_previous_start = {
-      ['[m'] = '@function.outer',
-      ['[['] = '@class.outer',
-    },
-    goto_previous_end = {
-      ['[M'] = '@function.outer',
-      ['[]'] = '@class.outer',
-    },
-  },
-  swap = {
-    swap_next = {
-      ['<leader>a'] = '@parameter.inner',
-    },
-    swap_previous = {
-      ['<leader>A'] = '@parameter.inner',
-    },
   },
 }
+
+-- Select textobjects
+local ts_select = require 'nvim-treesitter-textobjects.select'
+local select_map = {
+  ['aa'] = '@parameter.outer',
+  ['ia'] = '@parameter.inner',
+  ['af'] = '@function.outer',
+  ['if'] = '@function.inner',
+  ['ac'] = '@class.outer',
+  ['ic'] = '@class.inner',
+}
+for lhs, query in pairs(select_map) do
+  vim.keymap.set({ 'x', 'o' }, lhs, function()
+    ts_select.select_textobject(query, 'textobjects')
+  end, { desc = 'Select ' .. query })
+end
+
+-- Move between textobjects
+local ts_move = require 'nvim-treesitter-textobjects.move'
+local move_map = {
+  goto_next_start = { [']m'] = '@function.outer', [']]'] = '@class.outer' },
+  goto_next_end = { [']M'] = '@function.outer', [']['] = '@class.outer' },
+  goto_previous_start = { ['[m'] = '@function.outer', ['[['] = '@class.outer' },
+  goto_previous_end = { ['[M'] = '@function.outer', ['[]'] = '@class.outer' },
+}
+for fn, maps in pairs(move_map) do
+  for lhs, query in pairs(maps) do
+    vim.keymap.set({ 'n', 'x', 'o' }, lhs, function()
+      ts_move[fn](query, 'textobjects')
+    end, { desc = 'Move ' .. fn .. ' ' .. query })
+  end
+end
+
+-- Swap parameters. Moved off <leader>a/<leader>A, which now belong to the
+-- claudecode.nvim keymap namespace; <leader>xa / <leader>xA instead.
+local ts_swap = require 'nvim-treesitter-textobjects.swap'
+vim.keymap.set('n', '<leader>xa', function()
+  ts_swap.swap_next '@parameter.inner'
+end, { desc = 'Swap parameter with next' })
+vim.keymap.set('n', '<leader>xA', function()
+  ts_swap.swap_previous '@parameter.inner'
+end, { desc = 'Swap parameter with previous' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
