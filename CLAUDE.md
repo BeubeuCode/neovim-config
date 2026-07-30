@@ -34,6 +34,7 @@ Global functions defined in `init.lua`:
 
 ## Notable Quirks
 
-- `github/copilot.vim` and `zbirenbaum/copilot.lua` are both installed (the latter is a CopilotChat dependency)
-- Some plugins are declared twice (vscode.nvim, Comment.nvim, mason.nvim) — lazy.nvim deduplicates them
-- `lua/custom/plugins/lualine.lua` returns `{}` (disabled); lualine is configured in `init.lua`
+- No AI plugins bundled — Claude Code runs in a separate terminal, not inside nvim.
+- lualine is configured solely in `lua/custom/plugins/lualine.lua` (bubbles theme); the `init.lua` block was removed.
+- Git: `<leader>gg` opens lazygit in a floating terminal (requires `lazygit` on PATH); gitsigns hunk keymaps live under `<leader>h*` with `]c`/`[c` to navigate hunks.
+- none-ls/prettier.nvim need `eslint`/`prettier` resolvable (project-local `node_modules/.bin` or global); otherwise JS/TS formatting/linting silently no-ops.
