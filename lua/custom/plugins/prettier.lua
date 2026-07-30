@@ -1,65 +1,56 @@
-return  {
-    'MunifTanjim/prettier.nvim',
-    dependencies = {
-      'neovim/nvim-lspconfig',
-      'nvimtools/none-ls.nvim',
-    },
-    config = function ()
-      local null_ls = require("null-ls")
+return {
+  'nvimtools/none-ls.nvim',
+  dependencies = {
+    'neovim/nvim-lspconfig',
+    'nvimtools/none-ls-extras.nvim',
+  },
+  config = function()
+    local null_ls = require('null-ls')
+    local group = vim.api.nvim_create_augroup('lsp_format_on_save', { clear = false })
 
-      local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
-      local event = "BufWritePre" -- or "BufWritePost"
-      local async = event == "BufWritePost"
+    -- JS/TS format on demand only (<Leader>f), not on save.
+    local skip_format_on_save = {
+      javascript = true,
+      javascriptreact = true,
+      typescript = true,
+      typescriptreact = true,
+    }
 
-      null_ls.setup({
-        on_attach = function(client, bufnr)
-          local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-          local skip_format_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
-          local should_format = not vim.tbl_contains(skip_format_filetypes, filetype)
+    -- Prefer the project's own binaries; fall back to PATH.
+    local local_bin = { prefer_local = 'node_modules/.bin' }
 
-          if client.supports_method("textDocument/formatting") then
-            vim.keymap.set("n", "<Leader>f", function()
-              vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
-            end, { buffer = bufnr, desc = "[lsp] format" })
+    null_ls.setup({
+      sources = {
+        require('none-ls.code_actions.eslint').with(local_bin),
+        require('none-ls.formatting.eslint').with(local_bin),
+        null_ls.builtins.formatting.prettier.with(vim.tbl_extend('force', local_bin, {
+          filetypes = { 'css', 'graphql', 'html', 'json', 'less', 'markdown', 'scss', 'yaml' },
+        })),
+      },
+      on_attach = function(client, bufnr)
+        if not client:supports_method('textDocument/formatting') then
+          return
+        end
 
-            -- format on save (skip for JS/TS files)
-            if should_format then
-              vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
-              vim.api.nvim_create_autocmd(event, {
-                buffer = bufnr,
-                group = group,
-                callback = function()
-                  vim.lsp.buf.format({ bufnr = bufnr, async = async })
-                end,
-                desc = "[lsp] format on save",
-              })
-            end
-          end
+        vim.keymap.set({ 'n', 'x' }, '<Leader>f', function()
+          vim.lsp.buf.format({ bufnr = bufnr })
+        end, { buffer = bufnr, desc = '[lsp] format' })
 
-          if client.supports_method("textDocument/rangeFormatting") then
-            vim.keymap.set("x", "<Leader>f", function()
-              vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
-            end, { buffer = bufnr, desc = "[lsp] format" })
-          end
-        end,
-        sources = {null_ls.builtins.code_actions.eslint, null_ls.builtins.formatting.eslint},
-      })
+        local filetype = vim.api.nvim_get_option_value('filetype', { buf = bufnr })
+        if skip_format_on_save[filetype] then
+          return
+        end
 
-      local prettier = require("prettier")
-
-      prettier.setup({
-        bin = 'prettier', -- or `'prettierd'` (v0.23.3+)
-        filetypes = {
-          "css",
-          "graphql",
-          "html",
-          "json",
-          "less",
-          "markdown",
-          "scss",
-          "yaml",
-        },
-      })
-    end
-  }
-
+        vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
+        vim.api.nvim_create_autocmd('BufWritePre', {
+          buffer = bufnr,
+          group = group,
+          callback = function()
+            vim.lsp.buf.format({ bufnr = bufnr })
+          end,
+          desc = '[lsp] format on save',
+        })
+      end,
+    })
+  end,
+}
