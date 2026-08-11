@@ -361,8 +361,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 
 vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true})
 -- config Nvim tree
-vim.keymap.set("n", "<leader>fbf", ":NvimTreeFocus<cr>", { desc= '[F]ile [B]rowser [F]ocus' })
-vim.keymap.set("n", "<leader>fbt", ":NvimTreeToggle<cr>", { desc= '[F]ile [B]rowser [T]oggle' })
+vim.keymap.set("n", "<leader>fb", ":NvimTreeToggle<cr>", { desc= '[F]ile [B]rowser [T]oggle' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -443,6 +442,18 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagn
 
 -- oil
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
+-- Copy relative file path (and with line number) to system clipboard
+vim.keymap.set('n', '<leader>yp', function()
+  local path = vim.fn.fnamemodify(vim.fn.expand('%'), ':.')
+  vim.fn.setreg('+', path)
+  vim.notify('Copied: ' .. path)
+end, { desc = '[Y]ank relative [P]ath' })
+vim.keymap.set('n', '<leader>yl', function()
+  local path = vim.fn.fnamemodify(vim.fn.expand('%'), ':.') .. ':' .. vim.fn.line('.')
+  vim.fn.setreg('+', path)
+  vim.notify('Copied: ' .. path)
+end, { desc = '[Y]ank relative path with [L]ine' })
 
 
 -- LSP settings.
