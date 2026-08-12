@@ -26,6 +26,15 @@ return {
         null_ls.builtins.formatting.prettier.with(vim.tbl_extend('force', local_bin, {
           filetypes = { 'css', 'graphql', 'html', 'json', 'less', 'markdown', 'scss', 'yaml' },
         })),
+        -- PHPStan/Larastan: only runs if the project has a phpstan config at its root.
+        null_ls.builtins.diagnostics.phpstan.with({
+          command = 'vendor/bin/phpstan',
+          cwd = function(params) return params.root end,
+          runtime_condition = function(params)
+            return vim.fn.filereadable(params.root .. '/phpstan.neon') == 1
+              or vim.fn.filereadable(params.root .. '/phpstan.neon.dist') == 1
+          end,
+        }),
       },
       on_attach = function(client, bufnr)
         if not client:supports_method('textDocument/formatting') then
