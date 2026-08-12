@@ -515,6 +515,21 @@ vim.lsp.config('lua_ls', {
     },
   },
 })
+-- Pest binds test closures to an anonymous TestCase subclass, so intelephense
+-- can't see dynamic `$this->foo` properties set in beforeEach() and flags them
+-- as undefined (P1014). Drop just that code, and only under tests/.
+vim.lsp.config('intelephense', {
+  handlers = {
+    ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
+      if result and result.diagnostics and result.uri:match('/tests/') then
+        result.diagnostics = vim.tbl_filter(function(d)
+          return d.code ~= 'P1014'
+        end, result.diagnostics)
+      end
+      vim.lsp.handlers['textDocument/publishDiagnostics'](err, result, ctx, config)
+    end,
+  },
+})
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
