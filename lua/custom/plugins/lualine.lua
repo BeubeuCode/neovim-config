@@ -96,7 +96,16 @@ return {
                     lualine_y = {},
                     lualine_z = { 'location' },
                 },
-                tabline = {},
+                tabline = {
+                    lualine_a = {
+                        {
+                            'buffers',
+                            mode = 2,
+                            symbols = { modified = ' ●', alternate_file = '' },
+                        },
+                    },
+                    lualine_z = { 'tabs' },
+                },
                 extensions = {},
             })
         end
