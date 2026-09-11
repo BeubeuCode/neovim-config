@@ -102,6 +102,12 @@ return {
                             'buffers',
                             mode = 2,
                             symbols = { modified = ' ●', alternate_file = '' },
+                            fmt = function(name, buf)
+                                if buf.buftype == 'terminal' and not buf.file:match('^term://') then
+                                    return vim.fn.fnamemodify(buf.file, ':t')
+                                end
+                                return name
+                            end,
                         },
                     },
                     lualine_z = { 'tabs' },
