@@ -1,29 +1,29 @@
-# Config Neovim du beubeu
+# Beubeu's Neovim Config
 
-Config Neovim perso, basée sur [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim), orientée dev web (TypeScript/JavaScript) et PHP/Laravel.
+Personal Neovim configuration derived from [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim), targeting web development (TypeScript/JavaScript) and PHP/Laravel.
 
 ## Installation
 
-### Prérequis
+### Prerequisites
 
-- Neovim 0.10.0 ou plus récent
+- Neovim 0.10.0 or newer
 - Git
-- Un [Nerd Font](https://www.nerdfonts.com/) installé et sélectionné dans le terminal (icônes de la tabline/statusline)
+- A [Nerd Font](https://www.nerdfonts.com/) installed and selected in your terminal (icons in the tabline/statusline)
 - `ripgrep` (Telescope live grep)
-- `lazygit` (pour `<leader>gg`)
-- `tree-sitter-cli` (`brew install tree-sitter-cli`) si besoin d'installer des parsers Treesitter manquants
+- `lazygit` (for `<leader>gg`)
+- `tree-sitter-cli` (`brew install tree-sitter-cli`) if you need to install missing Treesitter parsers
 
-### Installation
+### Setup
 
-1. Cloner le dépôt dans le dossier de configuration de Neovim
+1. Clone the repo into your Neovim config folder
    ```bash
    git clone <repo> ~/.config/nvim
    ```
-2. Lancer Neovim — lazy.nvim s'auto-installe et récupère les plugins au premier démarrage
+2. Launch Neovim — lazy.nvim bootstraps itself and installs plugins on first run
    ```bash
    nvim
    ```
-3. Vérifier l'état des plugins et LSP
+3. Check plugin and LSP health
    ```vim
    :Lazy
    :Mason
@@ -31,86 +31,86 @@ Config Neovim perso, basée sur [kickstart.nvim](https://github.com/nvim-lua/kic
 
 ## Structure
 
-- `init.lua` — options, keymaps, LSP, complétion, Treesitter, Telescope
-- `lua/custom/plugins/*.lua` — un fichier par plugin, chargés automatiquement via `{ import = 'custom.plugins' }`
+- `init.lua` — options, keymaps, LSP, completion, Treesitter, Telescope
+- `lua/custom/plugins/*.lua` — one file per plugin, auto-loaded via `{ import = 'custom.plugins' }`
 
-## Points clés
+## Key points
 
-- **Leader** : `<Space>`
-- **Colorscheme** par défaut : `gruvbox` (transparence activée au démarrage)
-- **LSP** : `ts_ls` (TypeScript/JS), `lua_ls` (Lua), `intelephense` via laravel.nvim (PHP/Laravel) — gérés par Mason
-- **Formatage** : prettier.nvim + none-ls (binaires project-local `node_modules/.bin` sinon globaux). JS/TS/JSX/TSX ne sont pas formatés à la sauvegarde ; CSS/HTML/JSON/YAML/Markdown/SCSS/GraphQL le sont. Format manuel : `<leader>f`
-- **Diagnostics** : PHPStan/Larastan via none-ls, bruit `intelephense` filtré sur les tests Pest
+- **Leader**: `<Space>`
+- **Default colorscheme**: `gruvbox` (transparency enabled on startup)
+- **LSP**: `ts_ls` (TypeScript/JS), `lua_ls` (Lua), `intelephense` via laravel.nvim (PHP/Laravel) — managed by Mason
+- **Formatting**: prettier.nvim + none-ls (project-local `node_modules/.bin` binaries, falling back to global). JS/TS/JSX/TSX are excluded from format-on-save; CSS/HTML/JSON/YAML/Markdown/SCSS/GraphQL are formatted on save. Manual format: `<leader>f`
+- **Diagnostics**: PHPStan/Larastan via none-ls, with `intelephense` noise filtered on Pest tests
 
-## Raccourcis principaux
+## Key mappings
 
-### Recherche (Telescope)
+### Search (Telescope)
 
-| Touche | Action |
+| Key | Action |
 | --- | --- |
-| `<leader>sf` | Chercher des fichiers |
-| `<leader>sg` | Grep dans le projet |
-| `<leader>sG` | Grep littéral (caractères spéciaux) |
-| `<leader>sw` | Chercher le mot sous le curseur |
-| `<leader>sh` | Chercher dans l'aide |
-| `<leader>sd` | Liste des diagnostics |
-| `<leader><space>` | Buffers ouverts |
-| `<leader>/` | Recherche floue dans le buffer courant |
-| `<leader>?` | Fichiers récents |
+| `<leader>sf` | Search files |
+| `<leader>sg` | Grep across the project |
+| `<leader>sG` | Literal grep (special characters) |
+| `<leader>sw` | Search word under cursor |
+| `<leader>sh` | Search help tags |
+| `<leader>sd` | List diagnostics |
+| `<leader><space>` | Open buffers |
+| `<leader>/` | Fuzzy search in current buffer |
+| `<leader>?` | Recently opened files |
 
-### Fichiers
+### Files
 
-| Touche | Action |
+| Key | Action |
 | --- | --- |
-| `-` | Ouvrir le dossier parent (Oil) |
-| `<leader>ff` | Ouvrir Oil |
+| `-` | Open parent directory (Oil) |
+| `<leader>ff` | Open Oil |
 | `<leader>fb` | Toggle NvimTree |
-| `<leader>yp` | Copier le chemin relatif du fichier |
-| `<leader>yl` | Copier le chemin relatif avec numéro de ligne |
+| `<leader>yp` | Yank relative file path |
+| `<leader>yl` | Yank relative path with line number |
 
 ### LSP & diagnostics
 
-| Touche | Action |
+| Key | Action |
 | --- | --- |
-| `[d` / `]d` | Diagnostic précédent / suivant |
-| `<leader>e` | Diagnostic en float |
-| `<leader>q` | Liste des diagnostics (loclist) |
+| `[d` / `]d` | Previous / next diagnostic |
+| `<leader>e` | Open floating diagnostic |
+| `<leader>q` | Diagnostics list (loclist) |
 
 ### Git
 
-| Touche | Action |
+| Key | Action |
 | --- | --- |
-| `<leader>gg` | Lazygit (terminal flottant) |
+| `<leader>gg` | Lazygit (floating terminal) |
 | `<leader>hs` / `<leader>hr` | Stage / reset hunk |
 | `<leader>hp` | Preview hunk |
-| `<leader>hb` | Blame de la ligne |
-| `<leader>hd` | Diff du fichier |
-| `]c` / `[c` | Naviguer entre les hunks |
+| `<leader>hb` | Blame current line |
+| `<leader>hd` | Diff current file |
+| `]c` / `[c` | Navigate between hunks |
 
 ### Laravel
 
-| Touche | Action |
+| Key | Action |
 | --- | --- |
-| `<leader>ll` | Picker Laravel |
-| `<leader>la` | Picker Artisan |
-| `<leader>lr` | Picker Routes |
-| `<leader>lm` | Picker Make |
-| `<leader>lc` | Picker Commands |
-| `<leader>lo` | Picker Resources |
+| `<leader>ll` | Laravel picker |
+| `<leader>la` | Artisan picker |
+| `<leader>lr` | Routes picker |
+| `<leader>lm` | Make picker |
+| `<leader>lc` | Commands picker |
+| `<leader>lo` | Resources picker |
 | `<c-g>` | View finder |
 
 ### Tests
 
-| Touche | Action |
+| Key | Action |
 | --- | --- |
-| `<leader>rf` | Lancer le fichier RSpec courant |
-| `<leader>rl` | Lancer la ligne RSpec courante |
-| `<leader>rp` | Lancer les tests Pest (`php artisan test`) |
+| `<leader>rf` | Run current RSpec file |
+| `<leader>rl` | Run current RSpec line |
+| `<leader>rp` | Run Pest tests (`php artisan test`) |
 
-### Divers
+### Misc
 
-| Touche | Action |
+| Key | Action |
 | --- | --- |
-| `<leader>t` | Terminal flottant |
-| `<Tab>` / `<S-Tab>` | Onglet suivant / précédent |
-| `<C-n>` / `<C-p>` | Buffer suivant / précédent |
+| `<leader>t` | Floating terminal |
+| `<Tab>` / `<S-Tab>` | Next / previous tab |
+| `<C-n>` / `<C-p>` | Next / previous buffer |
