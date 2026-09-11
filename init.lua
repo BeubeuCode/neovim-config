@@ -173,6 +173,13 @@ require('lazy').setup({
   { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
   {
+    'folke/tokyonight.nvim',
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
+
+  {
     'Shatur/neovim-ayu',
     priority = 1000,
   },
@@ -625,7 +632,7 @@ vim.api.nvim_set_keymap('n', '<C-p>', ':tabprevious<CR>', {noremap = true, silen
 
 vim.cmd('TransparentEnable')
 
-vim.cmd('colorscheme gruvbox')
+vim.cmd('colorscheme tokyonight')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
