@@ -612,15 +612,15 @@ vim.api.nvim_set_keymap('n', '<Leader>rl', ':lua RunRspecLine()<CR>', {noremap =
 -- run pest spec path
 vim.api.nvim_set_keymap('n', '<Leader>rp', ':lua RunPestFile()<CR>', {noremap = true, silent = true})
 
--- use tab to cycle through tabs
-vim.api.nvim_set_keymap('n', '<Tab>', ':tabnext<CR>', {noremap = true, silent = true})
--- use shift-tab to cycle through tabs
-vim.api.nvim_set_keymap('n', '<S-Tab>', ':tabprevious<CR>', {noremap = true, silent = true})
+-- use tab to cycle through buffers
+vim.api.nvim_set_keymap('n', '<Tab>', ':bnext<CR>', {noremap = true, silent = true})
+-- use shift-tab to cycle through buffers
+vim.api.nvim_set_keymap('n', '<S-Tab>', ':bprevious<CR>', {noremap = true, silent = true})
 
--- use C-n to cycle through buffers 
-vim.api.nvim_set_keymap('n', '<C-n>', ':bnext<CR>', {noremap = true, silent = true})
--- use C-p to cycle through buffers 
-vim.api.nvim_set_keymap('n', '<C-p>', ':bprevious<CR>', {noremap = true, silent = true})
+-- use C-n to cycle through tabs
+vim.api.nvim_set_keymap('n', '<C-n>', ':tabnext<CR>', {noremap = true, silent = true})
+-- use C-p to cycle through tabs
+vim.api.nvim_set_keymap('n', '<C-p>', ':tabprevious<CR>', {noremap = true, silent = true})
 
 vim.cmd('TransparentEnable')
 

@@ -112,5 +112,5 @@ Personal Neovim configuration derived from [kickstart.nvim](https://github.com/n
 | Key | Action |
 | --- | --- |
 | `<leader>t` | Floating terminal |
-| `<Tab>` / `<S-Tab>` | Next / previous tab |
-| `<C-n>` / `<C-p>` | Next / previous buffer |
+| `<Tab>` / `<S-Tab>` | Next / previous buffer |
+| `<C-n>` / `<C-p>` | Next / previous tab |
