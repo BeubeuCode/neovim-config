@@ -304,6 +304,7 @@ vim.keymap.set('n', '<leader>h', '<C-W>h', { silent = true})
 
 -- map <C-\><C-n> to escape in terminal mode
 vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true})
+vim.api.nvim_set_keymap('t', '<C-v><Esc>', '<Esc>', { noremap = true })
 
 -- Ensure n and N work for search navigation (next/previous search result)
 vim.keymap.set('n', 'n', 'nzzzv', { silent = true, desc = 'Next search result' })
