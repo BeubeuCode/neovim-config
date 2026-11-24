@@ -1,6 +1,6 @@
 # Beubeu's Neovim Config
 
-Personal Neovim configuration derived from [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim), targeting web development (TypeScript/JavaScript) and PHP/Laravel.
+Personal Neovim configuration derived from [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim), targeting web development (TypeScript/JavaScript), PHP/Laravel and Ruby on Rails.
 
 ![Bubble-styled tabline and statusline with inline git blame](assets/screenshot.png)
 
@@ -48,7 +48,7 @@ lua/plugins/             one lazy.nvim spec per file, auto-imported
 
 - **Leader**: `<Space>`
 - **Default colorscheme**: `tokyonight` (transparency enabled on startup)
-- **LSP**: `ts_ls` (TypeScript/JS), `lua_ls` (Lua), `intelephense` via laravel.nvim (PHP/Laravel) — managed by Mason
+- **LSP**: `ts_ls` (TypeScript/JS), `lua_ls` (Lua), `ruby_lsp` (Ruby/Rails), `intelephense` via laravel.nvim (PHP/Laravel) — managed by Mason
 - **Formatting**: prettier via none-ls (project-local `node_modules/.bin` binaries, falling back to global). JS/TS/JSX/TSX are excluded from format-on-save; CSS/HTML/JSON/YAML/Markdown/SCSS/GraphQL are formatted on save. Manual format: `<leader>f`
 - **Diagnostics**: PHPStan/Larastan via none-ls, with `intelephense` noise filtered on Pest tests
 
@@ -65,6 +65,7 @@ lua/plugins/             one lazy.nvim spec per file, auto-imported
 | Git | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim), [git-blame.nvim](https://github.com/f-person/git-blame.nvim), [vim-fugitive](https://github.com/tpope/vim-fugitive), [vim-rhubarb](https://github.com/tpope/vim-rhubarb) |
 | Terminal | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) |
 | Laravel | [laravel.nvim](https://github.com/adalessa/laravel.nvim) |
+| Rails | [vim-rails](https://github.com/tpope/vim-rails), [ruby-lsp](https://github.com/Shopify/ruby-lsp) + [ruby-lsp-rails](https://github.com/Shopify/ruby-lsp-rails) |
 
 ## Colorschemes
 
@@ -145,6 +146,20 @@ The lualine theme pulls its colors from the active colorscheme, so the bubbles f
 | `<c-g>` | View finder |
 
 Laravel mappings only load in projects with an `artisan` file at the root.
+
+### Rails
+
+vim-rails only loads in projects with a `bin/rails` file at the root.
+
+| Command | Action |
+| --- | --- |
+| `:A` / `:R` | Alternate (spec) / related (view, migration) file |
+| `gf` | Jump to partial, association, route helper under cursor |
+| `:Emodel`, `:Econtroller`, `:Eview`, … | Open a Rails file by name, with completion |
+| `:Generate` / `:Destroy` | `rails generate` / `rails destroy` |
+| `:Rails <task>` | Run a rails command or rake task |
+
+For Rails-aware LSP features (routes, associations, schema on hover), add `ruby-lsp-rails` to the project's Gemfile development group.
 
 ### Tests
 
