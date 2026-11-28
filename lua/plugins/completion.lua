@@ -8,6 +8,7 @@ return {
     'hrsh7th/cmp-buffer',
     'onsails/lspkind.nvim',
     'hrsh7th/cmp-cmdline',
+    'hrsh7th/cmp-nvim-lua',
     'rafamadriz/friendly-snippets',
   },
   config = function()
@@ -25,7 +26,7 @@ return {
       formatting = {
         format = require('lspkind').cmp_format {
           mode = 'symbol_text',
-          menu = { nvim_lsp = '[LSP]', luasnip = '[Snip]', path = '[Path]', buffer = '[Buf]' },
+          menu = { nvim_lsp = '[LSP]', nvim_lua = '[Lua]', luasnip = '[Snip]', path = '[Path]', buffer = '[Buf]' },
         },
       },
       experimental = { ghost_text = true },
@@ -60,6 +61,7 @@ return {
       },
       sources = {
         { name = 'nvim_lsp' },
+        { name = 'nvim_lua' },
         { name = 'luasnip' },
         { name = 'path' },
         { name = 'buffer' },
