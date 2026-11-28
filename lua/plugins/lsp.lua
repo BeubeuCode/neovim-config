@@ -67,6 +67,11 @@ return {
     })
 
     require('mason').setup()
-    require('mason-lspconfig').setup { ensure_installed = { 'ts_ls', 'lua_ls', 'ruby_lsp', 'rust_analyzer', 'gopls' } }
+    local ensure_installed = { 'ts_ls', 'lua_ls', 'rust_analyzer', 'gopls' }
+    -- ruby-lsp installs through `gem`; skip it when Ruby isn't on PATH instead of failing on every start
+    if vim.fn.executable 'gem' == 1 then
+      table.insert(ensure_installed, 'ruby_lsp')
+    end
+    require('mason-lspconfig').setup { ensure_installed = ensure_installed }
   end,
 }
