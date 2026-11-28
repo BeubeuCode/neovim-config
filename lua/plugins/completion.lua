@@ -6,6 +6,7 @@ return {
     'saadparwaiz1/cmp_luasnip',
     'hrsh7th/cmp-path',
     'hrsh7th/cmp-buffer',
+    'onsails/lspkind.nvim',
   },
   config = function()
     local cmp = require 'cmp'
@@ -14,6 +15,17 @@ return {
     luasnip.config.setup {}
 
     cmp.setup {
+      window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+      },
+      formatting = {
+        format = require('lspkind').cmp_format {
+          mode = 'symbol_text',
+          menu = { nvim_lsp = '[LSP]', luasnip = '[Snip]', path = '[Path]', buffer = '[Buf]' },
+        },
+      },
+      experimental = { ghost_text = true },
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
