@@ -18,7 +18,7 @@ Personal Neovim configuration derived from [kickstart.nvim](https://github.com/n
 - **Window navigation:** `<C-h/j/k/l>`; LSP signature help is insert-mode `<C-k>`.
 - **Framework gating:** laravel.nvim loads only when cwd has `artisan`; vim-rails (`lua/plugins/rails.lua`) only when cwd has `bin/rails`.
 - **Keybinding namespaces:** `<leader>s*` = search/telescope, `<leader>l*` = Laravel, `<leader>fb*` = file browser, `<leader>r*` = test runners
-- **LSP servers:** `ts_ls` (TypeScript), `lua_ls` (Lua), `ruby_lsp` (Ruby/Rails). PHP uses `intelephense` via laravel.nvim. Managed by Mason + mason-lspconfig.
+- **LSP servers:** `ts_ls` (TypeScript), `lua_ls` (Lua), `ruby_lsp` (Ruby/Rails), `rust_analyzer` (Rust), `gopls` (Go, requires the `go` toolchain on PATH). PHP uses `intelephense` via laravel.nvim. Managed by Mason + mason-lspconfig.
 - **Formatting:** prettier via none-ls.nvim. JS/TS/JSX/TSX are excluded from format-on-save; CSS/HTML/JSON/YAML/Markdown/SCSS/GraphQL are formatted on save. Manual format: `<leader>f`.
 - **Diagnostics:** Virtual text disabled globally. Use `<leader>e` (float) or `<leader>q` (loclist).
 - **Treesitter:** Uses new API — `vim.treesitter.start()` via FileType autocmd for highlighting; `require('nvim-treesitter').setup()` for parser installation; `require('nvim-treesitter-textobjects').setup()` for text objects.
